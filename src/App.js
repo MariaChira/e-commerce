@@ -5,20 +5,46 @@ import "./App.css";
 
 import HomePage from "./pages/homepage/homepage.component";
 import ShopPage from "./pages/shop/shop";
+import SignInAndSignUpPage from "./pages/sign-in-and-sign-up/sign-in-and-sign-up";
 import Header from "./components/header/header";
+import  { auth } from './firebase/firebase.utils'
 
 
+class App extends React.Component {
+  constructor() {
+    super();
 
-function App() {
+    this.state = {
+      currentUser: null
+    }
+  }
+
+  unsubscribeFromAuth = null
+
+  componentDidMount() {
+    auth.onAuthStateChanged(user => {
+      this.setState({ currentUser: user});
+
+      console.log(user)
+    })
+  }
+
+  componentWillUnmount() {
+    this.unsubscribeFromAuth();
+  }
+
+  render() {
   return (
     <div>
-      <Header/>
+      <Header currentUser={this.state.currentUser}/>
       <Switch>
         <Route exact path="/" component={HomePage} />
         <Route path="/shop" component={ShopPage} />
+        <Route path="/signin" component={SignInAndSignUpPage} />
       </Switch>
     </div>
   );
+  }
 }
 
 export default App;
